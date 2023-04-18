@@ -15,6 +15,8 @@ int main(int ac, char *av[])
 	char *text_inputed;
 	size_t n;
 	ssize_t length_textinputed;
+	char *text_inputed_copy = NULL;
+	int numOfTokens = 0, i = 0;
 	/*
 	 * declaring void variables
 	 * because we haven't used them yet
@@ -23,7 +25,7 @@ int main(int ac, char *av[])
 	(void)ac;
 	(void)av;
 
-	printf("Shell Started... To exit \"press Enter\"\n");
+	printf("Shell Started... To exit \"press Enter Twice\"\n");
 /*
  * this loop keeps the shell running once started
  * without the loop the shell runce once and automatically exits
@@ -54,12 +56,60 @@ int main(int ac, char *av[])
 		}
 		else
 		{
+			text_inputed_copy = malloc(length_textinputed * sizeof(char *));
+			if (text_inputed_copy == NULL)
+			{
+				perror("Err: uunable to allocate memory to 'text_inputed_copy'");
+				return (-1);
+			}
+			strcpy(text_inputed_copy, text_inputed);
+		/*get number of tokens passed in or number of words*/
+			numOfTokens = count_numofTokens(text_inputed);
+			av = getTokens(text_inputed_copy, av); 
 			printf("%s\n", text_inputed);
-			printf("%ld\n", length_textinputed);	
+			printf("%ld\n", length_textinputed);
+			printf("%d\n", numOfTokens);
+			for (i = 0; i < numOfTokens; i++)
+			{
+				printf("%s\n", av[i]);
+			}
+
 		}	
 	}
 	free(text_inputed);
 
 	return (0);
+}
+
+int count_numofTokens(char *text_inputed)
+{
+	char *token, *delim = " ";
+	int count = 0;
+
+	token = strtok(text_inputed, delim);
+	while (token != NULL)
+	{
+		count++;
+		token = strtok(NULL, delim);
+
+	}
+	return (count);
+}
+
+char** getTokens(char *text_inputed_copy, char *av[])
+{
+	char *token, *delim = " ";
+//	char *arr[numOfTokens];
+	int i = 0;
+
+	token = strtok(text_inputed_copy, delim);
+	while (token != NULL)
+	{
+		av[i] = token;	
+		i++;
+		token = strtok(NULL, delim);
+	}
+	return (av);
+
 }
 
